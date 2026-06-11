@@ -1,0 +1,12 @@
+{
+  "name": "Drive: Talk to Me - كلمنى ",
+  "description": "A modern SaaS landing page with a constrained 9:16 video recording widget for capturing focused pitches.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "web-share"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
