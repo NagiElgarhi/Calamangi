@@ -43,7 +43,9 @@ export default function AdminPanel({ onClose }: { onClose: () => void }) {
       }
     } catch (err: any) {
       console.error("Login failed:", err);
-      alert(err.message || 'Login failed. Please try again.');
+      if (err.code !== 'auth/popup-closed-by-user') {
+        alert(err.message || 'Login failed. Please try again.');
+      }
     } finally {
       setIsLoggingIn(false);
     }
