@@ -146,47 +146,37 @@ export default function VideoRecorderWidget() {
       }
       setState('submitting');
 
-      // Transcode and upload to Google Drive
+      // Upload directly to Google Drive
       try {
-        const accessToken = await getAccessToken();
-        if (!accessToken) {
-          throw new Error("No access token available. User must authenticate.");
-        }
-
-        const formData = new FormData();
-        formData.append('video', blob, 'recording.webm');
-        
-        const transcodeRes = await fetch('/api/transcode', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!transcodeRes.ok) throw new Error('Transcoding failed');
-        const mp4Blob = await transcodeRes.blob();
-        
         const fileId = Date.now().toString();
-        const extension = 'mp4';
+        const extension = mimeType.includes('mp4') ? 'mp4' : 'webm';
         const filename = `my-story-${fileId}.${extension}`;
         
         const metadata = {
           name: filename,
-          mimeType: 'video/mp4'
+          mimeType: mimeType
         };
 
         const boundary = '-------314159265358979323846';
         const delimiter = "\r\n--" + boundary + "\r\n";
         const close_delim = "\r\n--" + boundary + "--";
 
+        const accessToken = await getAccessToken();
+
+        if (!accessToken) {
+          throw new Error("No access token available. User must authenticate.");
+        }
+
         const multipartRequestBody =
           delimiter +
           'Content-Type: application/json\r\n\r\n' +
           JSON.stringify(metadata) +
           delimiter +
-          'Content-Type: video/mp4\r\n\r\n';
+          'Content-Type: ' + mimeType + '\r\n\r\n';
 
         const formBlob = new Blob([
            multipartRequestBody,
-           mp4Blob,
+           blob,
            close_delim
         ]);
 
